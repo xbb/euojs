@@ -1,4 +1,6 @@
 #define BUILDING_NODE_EXTENSION
+#include <string>
+#include <vector>
 #include <node.h>
 
 using namespace v8;
@@ -27,6 +29,7 @@ typedef void (__stdcall *MARK)();
 typedef void (__stdcall *CLEAN)();
 typedef int (__stdcall *EXECUTE)(int);
 
+std::string ConvertCodePage(unsigned int fromCodePage, unsigned int toCodePage, const std::string& srcString);
 Handle<Value> GetHandle(const Arguments& args);
 Handle<Value> CloseHandle(const Arguments& args);
 Handle<Value> Call(const Arguments& args);

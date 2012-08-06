@@ -27,6 +27,37 @@ MARK Mark;
 CLEAN Clean;
 EXECUTE Execute;
 
+std::string ConvertCodePage(unsigned int fromCodePage, unsigned int toCodePage, const std::string& srcString) {
+  int size, retVal;
+
+  size = MultiByteToWideChar(fromCodePage, 0, srcString.c_str(), -1, NULL, 0);
+  if (size == 0) {
+    printf("Size check error\n");
+    return 0;
+  }
+  std::vector<wchar_t> vWstring(size+1);
+  retVal = MultiByteToWideChar(fromCodePage, 0, srcString.c_str(), -1, &vWstring[0], size+1);
+  if (retVal != size) {
+    printf("Conversion to unicode error\n");
+    return 0;
+  }
+  std::wstring wString = std::wstring(&vWstring[0]);
+
+  size = WideCharToMultiByte(toCodePage, 0, wString.c_str(), -1, NULL, 0, NULL, NULL);
+  if (size == 0) {
+    printf("W Size check error\n");
+    return 0;
+  }
+  std::vector<char> vString(size+1);
+  retVal = WideCharToMultiByte(toCodePage, 0, wString.c_str(), -1, &vString[0], size, NULL, NULL);
+  if (retVal != size) {
+    printf("Conversion to multibyte error\n");
+    return 0;
+  }
+  
+  return std::string(&vString[0]);
+}
+
 Handle<Value> GetHandle(const Arguments& args) {
   HandleScope scope;
   return scope.Close(Integer::New(Open()));
@@ -89,7 +120,8 @@ Handle<Value> Call(const Arguments& args) {
         results->Set(i, Integer::New(GetInteger(handle, i+1)));
         break;
       case 4:
-        results->Set(i, String::New(GetString(handle, i+1)));
+        std::string str = ConvertCodePage(CP_ACP, CP_UTF8, std::string(GetString(handle, i+1)));
+        results->Set(i, String::New(str.c_str()));
         break;
     }
   }
