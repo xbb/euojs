@@ -1,6 +1,5 @@
 #define BUILDING_NODE_EXTENSION
 #include <node.h>
-#include <string>
 
 using namespace v8;
 using namespace node;
@@ -28,19 +27,6 @@ typedef void (__stdcall *MARK)();
 typedef void (__stdcall *CLEAN)();
 typedef int (__stdcall *EXECUTE)(int);
 
-struct DllCallParams {
-  int type;
-  std::string string_param;
-  char* char_param;
-  int number_param;
-  bool boolean_param;
-};
-
-struct AsyncCallParams {
-  int handle;
-  int param_length;
-  int result_length;
-  DllCallParams* params;
-  DllCallParams* result;
-  Persistent<Function> callback;
-};
+Handle<Value> GetHandle(const Arguments& args);
+Handle<Value> CloseHandle(const Arguments& args);
+Handle<Value> Call(const Arguments& args);
