@@ -100,7 +100,8 @@ Handle<Value> Call(const Arguments& args) {
     } else if (value->IsNumber()) {
       PushInteger(handle, value->Int32Value());
     } else if (value->IsString()) {
-      PushStrVal(handle, *String::Utf8Value(value->ToString()));
+      std::string str = ConvertCodePage(CP_UTF8, CP_ACP, std::string(*String::Utf8Value(value->ToString())));
+      PushStrVal(handle, str.c_str());
     }
   }
   Execute(handle);
